@@ -1,24 +1,22 @@
 package com.HDiSED.BlockchainAnalysis.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.neo4j.ogm.annotation.GeneratedValue;
-import org.neo4j.ogm.annotation.Id;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
+import org.springframework.data.neo4j.core.schema.GeneratedValue;
+import org.springframework.data.neo4j.core.schema.Id;
+import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.util.List;
 
 
 @Getter
 @Setter
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@NodeEntity
-public class BitcoinModel {
+@Node("bitcoinTransaction")
+public class BitcoinTransaction {
 
     @Id
     @GeneratedValue
@@ -52,9 +50,9 @@ public class BitcoinModel {
 
     private String tx_index;
 
-    @Relationship(type="INPUT", direction = Relationship.INCOMING)
+    @Relationship(type="INPUT", direction = Relationship.Direction.INCOMING)
     private List<BitcoinInputsModel> inputs;
-
-    @Relationship(type="OUTPUT")
-    private List<BitcoinOutModel> out;
+//
+//    @Relationship(type="OUTPUT", direction = Relationship.Direction. )
+//    private List<BitcoinOutModel> out;
 }

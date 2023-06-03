@@ -4,16 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.neo4j.ogm.annotation.GeneratedValue;
-import org.neo4j.ogm.annotation.Id;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
+import org.springframework.data.neo4j.core.schema.*;
 
 @Getter
 @Setter
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-@NodeEntity
+@Node("bitcoinTransactionInput")
 public class BitcoinInputsModel {
 
     @Id
@@ -22,7 +19,7 @@ public class BitcoinInputsModel {
 
     private Integer index;
 
-    private Integer sequence;
+    private Long sequence;
 
     private String witness;
 
@@ -30,6 +27,6 @@ public class BitcoinInputsModel {
 
     private String script;
 
-    @Relationship(type = "REFERENCES")
-    private BitcoinModel bitcoinModel;
+    @TargetNode
+    private BitcoinTransaction bitcoinTransaction;
 }
