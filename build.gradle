@@ -19,12 +19,10 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.json:json:20230227'
 	implementation 'com.google.code.gson:gson:2.10.1'
-	implementation 'org.springframework.data:spring-data-neo4j:5.0.1.RELEASE'
-	implementation group: 'org.springframework.data', name: 'spring-data-commons', version: '3.1.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.0'
 	runtimeOnly 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok'
