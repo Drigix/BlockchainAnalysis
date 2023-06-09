@@ -1,9 +1,6 @@
 package com.HDiSED.BlockchainAnalysis.services.impl;
 
-import com.HDiSED.BlockchainAnalysis.models.BitcoinBlock;
-import com.HDiSED.BlockchainAnalysis.models.BitcoinInputsModel;
-import com.HDiSED.BlockchainAnalysis.models.BitcoinTransaction;
-import com.HDiSED.BlockchainAnalysis.models.User;
+import com.HDiSED.BlockchainAnalysis.models.*;
 import com.HDiSED.BlockchainAnalysis.repositories.BitcoinInputRepository;
 import com.HDiSED.BlockchainAnalysis.repositories.BitcoinTransactionRepository;
 import com.HDiSED.BlockchainAnalysis.repositories.UserRepository;
@@ -63,6 +60,14 @@ public class BitcoinServiceImpl implements BitcoinService {
         return bitcoinTransaction;
     }
 
+    @Override
+    public BitcoinAddress findOneAddress() throws JsonProcessingException {
+        String response = urlConnectionService.createConnection(bitcoinAddressConnectionURL);
+        ObjectMapper objectMapper = new ObjectMapper();
+        BitcoinAddress bitcoinAddress = objectMapper.readValue(response, BitcoinAddress.class);
+        //bitcoinTransactionRepository.save(bitcoinTransaction);
+        return bitcoinAddress;
+    }
     public void saveTransaction(BitcoinTransaction bitcoinTransaction) {
 //        String txQuery = "CREATE (tx:BitcoinTransaction {id: $txId, hash: $txHash})";
 //        try (var session = neo4jDriver.session()) {

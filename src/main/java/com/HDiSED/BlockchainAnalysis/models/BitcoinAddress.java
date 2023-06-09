@@ -3,6 +3,8 @@ package com.HDiSED.BlockchainAnalysis.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.neo4j.core.schema.GeneratedValue;
+import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
 import java.util.List;
@@ -12,6 +14,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Node("bitcoinAddress")
 public class BitcoinAddress {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
     private String hash;
 
     private String address;

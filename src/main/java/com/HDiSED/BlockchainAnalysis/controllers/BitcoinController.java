@@ -1,5 +1,6 @@
 package com.HDiSED.BlockchainAnalysis.controllers;
 
+import com.HDiSED.BlockchainAnalysis.models.BitcoinAddress;
 import com.HDiSED.BlockchainAnalysis.models.BitcoinBlock;
 import com.HDiSED.BlockchainAnalysis.models.BitcoinTransaction;
 import com.HDiSED.BlockchainAnalysis.services.BitcoinService;
@@ -28,5 +29,8 @@ public class BitcoinController {
     public BitcoinTransaction getSingleTransaction() throws JsonProcessingException {
         return bitcoinService.findOneTransaction();
     }
-
+    @GetMapping(value = "/address")
+    public BitcoinAddress getSingleAddress() throws JsonProcessingException {
+        return bitcoinService.findOneAddress();
+    }
 }
