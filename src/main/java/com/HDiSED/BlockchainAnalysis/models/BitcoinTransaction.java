@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.neo4j.core.schema.GeneratedValue;
-import org.springframework.data.neo4j.core.schema.Id;
-import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
+import org.springframework.data.neo4j.core.schema.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,6 +20,7 @@ public class BitcoinTransaction {
     @GeneratedValue
     private Long id;
 
+    @Property("hash")
     private String hash;
 
     private Integer ver;
@@ -50,8 +49,8 @@ public class BitcoinTransaction {
 
     private String tx_index;
 
-    @Relationship(type="INPUT", direction = Relationship.Direction.INCOMING)
-    private List<BitcoinInputsModel> inputs;
+    @Relationship(type="transaction_input", direction = Relationship.Direction.INCOMING)
+    private List<BitcoinInputsModel> inputs = new ArrayList<>();
 //
 //    @Relationship(type="OUTPUT", direction = Relationship.Direction. )
 //    private List<BitcoinOutModel> out;

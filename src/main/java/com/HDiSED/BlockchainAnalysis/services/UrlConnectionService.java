@@ -13,7 +13,6 @@ public class UrlConnectionService {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         String jsonResponse = response.getBody();
         return jsonResponse;
-
     }
 
 }

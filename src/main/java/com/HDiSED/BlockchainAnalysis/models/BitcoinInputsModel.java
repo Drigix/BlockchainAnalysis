@@ -6,9 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
-@Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Node("bitcoinTransactionInput")
 public class BitcoinInputsModel {
@@ -23,10 +25,8 @@ public class BitcoinInputsModel {
 
     private String witness;
 
-    private Object prev_out;
+    //private Object prev_out;
 
     private String script;
 
-    @TargetNode
-    private BitcoinTransaction bitcoinTransaction;
 }
