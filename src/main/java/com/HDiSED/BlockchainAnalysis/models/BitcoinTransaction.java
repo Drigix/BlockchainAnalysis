@@ -1,7 +1,6 @@
 package com.HDiSED.BlockchainAnalysis.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.neo4j.core.schema.*;
@@ -13,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Node("bitcoinTransaction")
+@Node("BitcoinTransaction")
 public class BitcoinTransaction {
 
     @Id
@@ -50,8 +49,8 @@ public class BitcoinTransaction {
     private String tx_index;
 
     @Relationship(type="transaction_input", direction = Relationship.Direction.INCOMING)
-    private List<BitcoinInputsModel> inputs = new ArrayList<>();
-//
-//    @Relationship(type="OUTPUT", direction = Relationship.Direction. )
-//    private List<BitcoinOutModel> out;
+    private List<BitcoinTransactionInputModel> inputs = new ArrayList<>();
+
+    @Relationship(type="transaction_out", direction = Relationship.Direction.OUTGOING)
+    private List<BitcoinTransactionOutModel> out;
 }
