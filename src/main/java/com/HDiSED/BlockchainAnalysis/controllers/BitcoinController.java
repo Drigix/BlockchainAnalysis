@@ -26,12 +26,12 @@ public class BitcoinController {
     return bitcoinService.findBlock();
     }
 
-    @GetMapping(value = "/transaction/{url}")
-    public BitcoinTransaction getSingleTransaction(@PathVariable String url) throws JsonProcessingException {
-        return bitcoinService.findOneTransaction(url);
+    @GetMapping(value = "/transaction/{hash}")
+    public BitcoinTransaction getSingleTransaction(@PathVariable String hash) throws JsonProcessingException {
+        return bitcoinService.findOneTransaction(hash);
     }
-    @GetMapping(value = "/address")
-    public BitcoinAddressModel getSingleAddress() throws JsonProcessingException {
-        return bitcoinService.findOneAddress();
+    @GetMapping(value = "/address/{address}")
+    public BitcoinAddressModel getSingleAddress(@PathVariable String address) throws JsonProcessingException {
+        return bitcoinService.findOneAddress(address);
     }
 }

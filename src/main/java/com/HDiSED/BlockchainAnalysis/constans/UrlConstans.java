@@ -6,5 +6,5 @@ public final class UrlConstans {
 
     public static final String bitcoinTransactionConnectionURL = "https://blockchain.info/rawtx/";
 
-    public static final String bitcoinAddressConnectionURL = "https://blockchain.info/rawaddr/bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh";
+    public static final String bitcoinAddressConnectionURL = "https://blockchain.info/rawaddr/";
 }

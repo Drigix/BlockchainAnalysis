@@ -24,6 +24,8 @@ public class BitcoinServiceImpl implements BitcoinService {
 
     private final BitcoinTransactionOutService bitcoinTransactionOutService;
 
+    private final BitcoinAddressService bitcoinAddressService;
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -36,21 +38,23 @@ public class BitcoinServiceImpl implements BitcoinService {
 
     @Override
     public BitcoinTransaction findOneTransaction(String url) throws JsonProcessingException {
-        String response = urlConnectionService.createConnection(bitcoinTransactionConnectionURL+url);
+        String response = urlConnectionService.createConnection(bitcoinTransactionConnectionURL + url);
         BitcoinTransaction bitcoinTransaction = objectMapper.readValue(response, BitcoinTransaction.class);
         saveTransaction(bitcoinTransaction);
         return bitcoinTransaction;
     }
 
     @Override
-    public BitcoinAddressModel findOneAddress() throws JsonProcessingException {
-        String response = urlConnectionService.createConnection(bitcoinAddressConnectionURL);
+    public BitcoinAddressModel findOneAddress(String url) throws JsonProcessingException {
+        String response = urlConnectionService.createConnection(bitcoinAddressConnectionURL + url);
         ObjectMapper objectMapper = new ObjectMapper();
         BitcoinAddressModel bitcoinAddress = objectMapper.readValue(response, BitcoinAddressModel.class);
         List<BitcoinTransaction> firstTenTransactions = bitcoinAddress.getTxs().subList(0, Math.min(bitcoinAddress.getTxs().size(), 50));
+        saveAddress(bitcoinAddress);
         for(BitcoinTransaction bitcoinTransaction: bitcoinAddress.getTxs()) {
             saveTransaction(bitcoinTransaction);
         }
+        //trying to save address to neo4j
         //bitcoinTransactionRepository.save(bitcoinTransaction);
         return bitcoinAddress;
     }
@@ -59,5 +63,8 @@ public class BitcoinServiceImpl implements BitcoinService {
         bitcoinTransactionOutService.create(bitcoinTransaction);
         bitcoinTransactionInputService.create(bitcoinTransaction);
 
+    }
+    public void saveAddress(BitcoinAddressModel bitcoinAddressModel) {
+        bitcoinAddressService.create(bitcoinAddressModel);
     }
 }
