@@ -13,4 +13,10 @@ public interface BitcoinTransactionRepository extends Neo4jRepository<BitcoinTra
 
     @Query("CREATE (bt:BitcoinTransaction $bt) RETURN bt")
     BitcoinTransaction createBitcionTransaction(Map<String, Object> bt);
+
+    @Query("MATCH (ba:BitcoinAddress {address: $address}) "
+            + "CREATE (bt:BitcoinTransaction $bt) "
+            + "CREATE (ba)-[:address_out]->(bt) "
+            + "RETURN bt")
+    BitcoinTransaction createBitcionTransactionToAddress(Map<String, Object> bt, String address);
 }

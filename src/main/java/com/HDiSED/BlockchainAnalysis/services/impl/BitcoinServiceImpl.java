@@ -52,15 +52,12 @@ public class BitcoinServiceImpl implements BitcoinService {
         ObjectMapper objectMapper = new ObjectMapper();
         System.out.println("dupa");
         BitcoinAddressModel bitcoinAddress = objectMapper.readValue(response, BitcoinAddressModel.class);
-        //List<BitcoinTransaction> firstTenTransactions = bitcoinAddress.getTxs().subList(0, Math.min(bitcoinAddress.getTxs().size(), 50));
+        List<BitcoinTransaction> firstTenTransactions = bitcoinAddress.getTxs().subList(0, Math.min(bitcoinAddress.getTxs().size(), 10));
         this.saveAddress(bitcoinAddress);
 
-//        for(BitcoinTransaction bitcoinTransaction: bitcoinAddress.getTxs()) {
-//            saveTransaction(bitcoinTransaction);
-//        }
-        //trying to save address to neo4j
-
-        //bitcoinTransactionRepository.save(bitcoinTransaction);
+        for(BitcoinTransaction bitcoinTransaction: firstTenTransactions) {
+            saveTransactionToAddress(bitcoinTransaction, bitcoinAddress.getAddress());
+        }
         return bitcoinAddress;
     }
 
@@ -75,8 +72,14 @@ public class BitcoinServiceImpl implements BitcoinService {
         bitcoinTransactionService.create(bitcoinTransaction);
         bitcoinTransactionOutService.create(bitcoinTransaction);
         bitcoinTransactionInputService.create(bitcoinTransaction);
-
     }
+
+    public void saveTransactionToAddress(BitcoinTransaction bitcoinTransaction, String address) {
+        bitcoinTransactionService.createToAddress(bitcoinTransaction, address);
+        bitcoinTransactionOutService.create(bitcoinTransaction);
+        bitcoinTransactionInputService.create(bitcoinTransaction);
+    }
+
     public void saveAddress(BitcoinAddressModel bitcoinAddressModel) {
         bitcoinAddressService.create(bitcoinAddressModel);
     }

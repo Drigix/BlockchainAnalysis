@@ -18,20 +18,20 @@ public class BitcoinAddressModel {
     @Id
     @GeneratedValue
     private Long id;
-//
-//    private String hash;
-//
-//    private String address;
 
-//    private Long n_tx;
-//
-//    private Long n_unredeemed;
-//
-//    private Double total_received;
-//
-//    private Double total_sent;
-//
-//    private Double final_balance;
-//
+    private String hash;
+
+    private String address;
+
+    private Long n_tx;
+
+    private Long n_unredeemed;
+
+    private Double total_received;
+
+    private Double total_sent;
+
+    private Double final_balance;
+
     private List<BitcoinTransaction> txs;
 }
