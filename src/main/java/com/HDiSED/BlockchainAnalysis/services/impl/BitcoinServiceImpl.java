@@ -3,11 +3,13 @@ package com.HDiSED.BlockchainAnalysis.services.impl;
 import com.HDiSED.BlockchainAnalysis.models.*;
 import com.HDiSED.BlockchainAnalysis.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import static com.HDiSED.BlockchainAnalysis.constans.UrlConstans.*;
 
@@ -48,15 +50,26 @@ public class BitcoinServiceImpl implements BitcoinService {
     public BitcoinAddressModel findOneAddress(String url) throws JsonProcessingException {
         String response = urlConnectionService.createConnection(bitcoinAddressConnectionURL + url);
         ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("dupa");
         BitcoinAddressModel bitcoinAddress = objectMapper.readValue(response, BitcoinAddressModel.class);
-        List<BitcoinTransaction> firstTenTransactions = bitcoinAddress.getTxs().subList(0, Math.min(bitcoinAddress.getTxs().size(), 50));
-        saveAddress(bitcoinAddress);
-        for(BitcoinTransaction bitcoinTransaction: bitcoinAddress.getTxs()) {
-            saveTransaction(bitcoinTransaction);
-        }
+        //List<BitcoinTransaction> firstTenTransactions = bitcoinAddress.getTxs().subList(0, Math.min(bitcoinAddress.getTxs().size(), 50));
+        this.saveAddress(bitcoinAddress);
+
+//        for(BitcoinTransaction bitcoinTransaction: bitcoinAddress.getTxs()) {
+//            saveTransaction(bitcoinTransaction);
+//        }
         //trying to save address to neo4j
+
         //bitcoinTransactionRepository.save(bitcoinTransaction);
         return bitcoinAddress;
+    }
+
+    @Override
+    public List<BitcoinAddressModel> findManyAddresses() throws JsonProcessingException {
+        String response = urlConnectionService.createConnection(bitcoinAddressesConectionURL);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<BitcoinAddressModel> bitcoinAddressModelList = objectMapper.readValue(response, new TypeReference<List<BitcoinAddressModel>>() {});
+        return bitcoinAddressModelList;
     }
     public void saveTransaction(BitcoinTransaction bitcoinTransaction) {
         bitcoinTransactionService.create(bitcoinTransaction);

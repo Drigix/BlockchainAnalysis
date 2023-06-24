@@ -12,4 +12,5 @@ public interface BitcoinService {
     BitcoinBlock findBlock() throws JsonProcessingException;
     BitcoinTransaction findOneTransaction(String url) throws JsonProcessingException;
     BitcoinAddressModel findOneAddress(String url) throws JsonProcessingException;
+    List<BitcoinAddressModel> findManyAddresses() throws JsonProcessingException;
 }

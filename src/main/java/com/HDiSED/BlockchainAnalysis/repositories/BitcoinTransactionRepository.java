@@ -10,8 +10,6 @@ import java.util.Map;
 
 @Repository
 public interface BitcoinTransactionRepository extends Neo4jRepository<BitcoinTransaction, Long> {
-    @Query("MATCH (tx:BitcoinTransaction) WHERE tx.hash = $txHash RETURN tx")
-    BitcoinTransaction findByHash(String txHash);
 
     @Query("CREATE (bt:BitcoinTransaction $bt) RETURN bt")
     BitcoinTransaction createBitcionTransaction(Map<String, Object> bt);

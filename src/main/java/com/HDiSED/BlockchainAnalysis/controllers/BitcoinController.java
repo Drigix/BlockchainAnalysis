@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class BitcoinController {
 
     private final BitcoinService bitcoinService;
-
 
     @GetMapping("/blocks")
     public BitcoinBlock getBlock() throws JsonProcessingException {
@@ -33,5 +34,10 @@ public class BitcoinController {
     @GetMapping(value = "/address/{address}")
     public BitcoinAddressModel getSingleAddress(@PathVariable String address) throws JsonProcessingException {
         return bitcoinService.findOneAddress(address);
+    }
+
+    @GetMapping(value = "/addresses")
+    public List<BitcoinAddressModel> getMultipleAddress() throws JsonProcessingException {
+        return bitcoinService.findManyAddresses();
     }
 }

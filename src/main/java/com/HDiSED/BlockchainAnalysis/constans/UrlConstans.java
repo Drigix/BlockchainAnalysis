@@ -7,4 +7,7 @@ public final class UrlConstans {
     public static final String bitcoinTransactionConnectionURL = "https://blockchain.info/rawtx/";
 
     public static final String bitcoinAddressConnectionURL = "https://blockchain.info/rawaddr/";
+//now 5 addresses only 2 transactions
+    public static final String bitcoinAddressesConectionURL = "https://blockchain.info/multiaddr?active=34xp4vRoCGJym3xR7yCVPFHoCNxv4Twseo|bc1qgdjqv0av3q56jvd82tkdjpy7gdp9ut8tlqmgrpmv24sq90ecnvqqjwvw97|3MgEAFWu1HKSnZ5ZsC8qf61ZW18xrP5pgd|3H5JTt42K7RmZtromfTSefcMEFMMe18pMD|385cR5DM96n1HvBDMzLHPYcw89fZAXULJP&n=2";
+
 }

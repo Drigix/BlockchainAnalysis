@@ -14,6 +14,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class BitcoinAddressServiceImpl implements BitcoinAddressService {
+
     private final BitcoinAddressRepository bitcoinAddressRepository;
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -21,6 +22,7 @@ public class BitcoinAddressServiceImpl implements BitcoinAddressService {
     @Override
     public BitcoinAddressModel create(BitcoinAddressModel bitcoinAddressModel) {
         Map<String, Object> bitcoinAddressModelMap = objectMapper.convertValue(bitcoinAddressModel, Map.class);
+        bitcoinAddressModelMap.remove("txs");
         return bitcoinAddressRepository.createBitcoinAddress(bitcoinAddressModelMap);
     }
 }
