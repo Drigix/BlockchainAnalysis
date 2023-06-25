@@ -50,11 +50,9 @@ public class BitcoinServiceImpl implements BitcoinService {
     public BitcoinAddressModel findOneAddress(String url) throws JsonProcessingException {
         String response = urlConnectionService.createConnection(bitcoinAddressConnectionURL + url);
         ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println("dupa");
         BitcoinAddressModel bitcoinAddress = objectMapper.readValue(response, BitcoinAddressModel.class);
         List<BitcoinTransaction> firstTenTransactions = bitcoinAddress.getTxs().subList(0, Math.min(bitcoinAddress.getTxs().size(), 10));
         this.saveAddress(bitcoinAddress);
-
         for(BitcoinTransaction bitcoinTransaction: firstTenTransactions) {
             saveTransactionToAddress(bitcoinTransaction, bitcoinAddress.getAddress());
         }

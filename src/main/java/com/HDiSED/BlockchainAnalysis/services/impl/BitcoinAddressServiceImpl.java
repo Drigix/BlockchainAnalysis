@@ -18,7 +18,6 @@ public class BitcoinAddressServiceImpl implements BitcoinAddressService {
     private final BitcoinAddressRepository bitcoinAddressRepository;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    //TODO implementation
     @Override
     public BitcoinAddressModel create(BitcoinAddressModel bitcoinAddressModel) {
         Map<String, Object> bitcoinAddressModelMap = objectMapper.convertValue(bitcoinAddressModel, Map.class);
