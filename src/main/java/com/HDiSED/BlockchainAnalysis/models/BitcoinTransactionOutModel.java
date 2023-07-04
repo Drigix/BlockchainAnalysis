@@ -24,8 +24,7 @@ public class BitcoinTransactionOutModel {
 
     private Integer n;
 
-    private String hash;
-
     private String script;
 
+    private String addr;
 }

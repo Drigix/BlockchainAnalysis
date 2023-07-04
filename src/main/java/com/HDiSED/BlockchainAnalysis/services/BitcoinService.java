@@ -2,6 +2,7 @@ package com.HDiSED.BlockchainAnalysis.services;
 
 import com.HDiSED.BlockchainAnalysis.models.BitcoinAddressModel;
 import com.HDiSED.BlockchainAnalysis.models.BitcoinBlock;
+import com.HDiSED.BlockchainAnalysis.models.BitcoinMultiAddress;
 import com.HDiSED.BlockchainAnalysis.models.BitcoinTransaction;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -12,5 +13,5 @@ public interface BitcoinService {
     BitcoinBlock findBlock() throws JsonProcessingException;
     BitcoinTransaction findOneTransaction(String url) throws JsonProcessingException;
     BitcoinAddressModel findOneAddress(String url) throws JsonProcessingException;
-    List<BitcoinAddressModel> findManyAddresses() throws JsonProcessingException;
+    BitcoinMultiAddress findManyAddresses() throws JsonProcessingException;
 }

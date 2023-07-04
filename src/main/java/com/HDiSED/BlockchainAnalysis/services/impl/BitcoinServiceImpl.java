@@ -3,13 +3,11 @@ package com.HDiSED.BlockchainAnalysis.services.impl;
 import com.HDiSED.BlockchainAnalysis.models.*;
 import com.HDiSED.BlockchainAnalysis.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
 import static com.HDiSED.BlockchainAnalysis.constans.UrlConstans.*;
 
@@ -27,6 +25,8 @@ public class BitcoinServiceImpl implements BitcoinService {
     private final BitcoinTransactionOutService bitcoinTransactionOutService;
 
     private final BitcoinAddressService bitcoinAddressService;
+
+    private final  BitcoinSingleAddressService bitcoinSingleAddressService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -60,12 +60,76 @@ public class BitcoinServiceImpl implements BitcoinService {
     }
 
     @Override
-    public List<BitcoinAddressModel> findManyAddresses() throws JsonProcessingException {
+    public BitcoinMultiAddress findManyAddresses() throws JsonProcessingException {
         String response = urlConnectionService.createConnection(bitcoinAddressesConectionURL);
         ObjectMapper objectMapper = new ObjectMapper();
-        List<BitcoinAddressModel> bitcoinAddressModelList = objectMapper.readValue(response, new TypeReference<List<BitcoinAddressModel>>() {});
-        return bitcoinAddressModelList;
+        BitcoinMultiAddress bitcoinMultiAddress = objectMapper.readValue(response, BitcoinMultiAddress.class);
+
+        // Zapisujemy BitcoinMultiAddress do bazy danych chyba usless
+        //saveBitcoinMultiAddress(bitcoinMultiAddress);
+    //TODO THIS SAVE
+        List<BitcoinSingleAddress> addresses = bitcoinMultiAddress.getAddresses();
+        List<BitcoinTransaction> transactions = bitcoinMultiAddress.getTxs();
+
+
+        for (BitcoinSingleAddress singleAddress : addresses) {
+            // Zapisujemy pojedynczy adres do bazy danych
+            saveBitcoinSingleAddress(singleAddress);
+//            for (BitcoinTransaction transaction : transactions) {
+//                saveTransactionToAddress(transaction, singleAddress.getAddress());
+////                for (BitcoinTransactionOutModel output : transaction.getOut()) {
+////                    if (true) {
+////                        // Zapisujemy transakcję powiązaną z adresem do bazy danych
+////                        saveTransactionToAddress(transaction, singleAddress.getAddress());
+////                        // Przerywamy pętlę wewnętrzną, bo adres pojedynczy już został znaleziony w transakcji
+////                        break;
+////                    }
+////                }
+//            }
+        }
+
+        //magia
+        for (BitcoinTransaction transaction : transactions) {
+
+            boolean hasInputAddress = false;
+
+            boolean hasOutputAddress = false;
+
+            List<BitcoinTransactionInputModel> inputs = transaction.getInputs();
+            //its plural number
+            List<BitcoinTransactionOutModel> outs = transaction.getOut();
+            String inputAddress = "";
+            String outAddress = "";
+            for (BitcoinTransactionInputModel input : inputs) {
+                 inputAddress = input.getPrev_out().getAddr();
+                if (true) {
+                    hasInputAddress = true;
+                    break; // Możemy przerwać pętlę, bo już znaleźliśmy adres IN na liście
+                }
+            }
+
+            // Sprawdzamy, czy adres OUT transakcji znajduje się na liście adresów
+            for (BitcoinTransactionOutModel out : outs) {
+                outAddress = out.getAddr();
+                if (true) {
+                    hasOutputAddress = true;
+                    break; // Możemy przerwać pętlę, bo już znaleźliśmy adres OUT na liście
+                }
+            }
+
+            // Jeśli zarówno adres IN, jak i adres OUT są na liście, zapisujemy transakcję
+            if (hasInputAddress && hasOutputAddress) {
+                saveTransactionToInputAndOutputAddresses(transaction, inputAddress, outAddress);
+            }
+        }
+        // Iterujemy przez listę transakcji
+        return bitcoinMultiAddress;
     }
+
+    private void saveBitcoinSingleAddress(BitcoinSingleAddress singleAddress) {
+        bitcoinSingleAddressService.create(singleAddress);
+    }
+
     public void saveTransaction(BitcoinTransaction bitcoinTransaction) {
         bitcoinTransactionService.create(bitcoinTransaction);
         bitcoinTransactionOutService.create(bitcoinTransaction);
@@ -73,9 +137,14 @@ public class BitcoinServiceImpl implements BitcoinService {
     }
 
     public void saveTransactionToAddress(BitcoinTransaction bitcoinTransaction, String address) {
-        bitcoinTransactionService.createToAddress(bitcoinTransaction, address);
-        bitcoinTransactionOutService.create(bitcoinTransaction);
-        bitcoinTransactionInputService.create(bitcoinTransaction);
+        BitcoinTransaction temp = bitcoinTransactionService.createToAddress(bitcoinTransaction, address);
+       // bitcoinTransactionService.createToAddress(bitcoinTransaction, address);
+//        bitcoinTransactionOutService.create(bitcoinTransaction);
+//        bitcoinTransactionInputService.create(bitcoinTransaction);
+    }
+
+    public void saveTransactionToInputAndOutputAddresses(BitcoinTransaction bitcoinTransaction, String addressIn, String addressOut){
+        bitcoinTransactionService.createToInputAndOutputAddresses(bitcoinTransaction, addressIn, addressOut);
     }
 
     public void saveAddress(BitcoinAddressModel bitcoinAddressModel) {

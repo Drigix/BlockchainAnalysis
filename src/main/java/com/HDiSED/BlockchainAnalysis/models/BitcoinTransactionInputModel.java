@@ -22,7 +22,7 @@ public class BitcoinTransactionInputModel {
 
     private String witness;
 
-    //private Object prev_out;
+    private BitcoinTransactionInputPrevOut prev_out;
 
     private String script;
 
