@@ -3,14 +3,14 @@ package com.HDiSED.BlockchainAnalysis.services.impl;
 import com.HDiSED.BlockchainAnalysis.models.*;
 import com.HDiSED.BlockchainAnalysis.services.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import static com.HDiSED.BlockchainAnalysis.constans.UrlConstans.*;
 
 @Service
@@ -27,6 +27,8 @@ public class BitcoinServiceImpl implements BitcoinService {
     private final BitcoinTransactionOutService bitcoinTransactionOutService;
 
     private final BitcoinAddressService bitcoinAddressService;
+
+    private final  BitcoinSingleAddressService bitcoinSingleAddressService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -60,12 +62,43 @@ public class BitcoinServiceImpl implements BitcoinService {
     }
 
     @Override
-    public List<BitcoinAddressModel> findManyAddresses() throws JsonProcessingException {
+    public BitcoinMultiAddress findManyAddresses() throws JsonProcessingException {
         String response = urlConnectionService.createConnection(bitcoinAddressesConectionURL);
         ObjectMapper objectMapper = new ObjectMapper();
-        List<BitcoinAddressModel> bitcoinAddressModelList = objectMapper.readValue(response, new TypeReference<List<BitcoinAddressModel>>() {});
-        return bitcoinAddressModelList;
+        BitcoinMultiAddress bitcoinMultiAddress = objectMapper.readValue(response, BitcoinMultiAddress.class);
+
+        // Zapisujemy BitcoinMultiAddress do bazy danych chyba usless
+        //saveBitcoinMultiAddress(bitcoinMultiAddress);
+    //TODO NEED GOOD ADDRESSES TO SAVE TRANSACTION
+        List<BitcoinSingleAddress> addresses = bitcoinMultiAddress.getAddresses();
+        List<BitcoinTransaction> transactions = bitcoinMultiAddress.getTxs();
+        List<String> addressesInDatabase = new ArrayList<>();
+
+        for (BitcoinSingleAddress singleAddress : addresses) {
+            addressesInDatabase.add(singleAddress.getAddress());
+            saveBitcoinSingleAddress(singleAddress);
+
+        }
+        List<BitcoinTransaction> filteredTransactions = transactions.stream()
+                .filter(transaction ->transaction
+                        .getOut()
+                        .stream()
+                        .anyMatch(outAddress -> addressesInDatabase.contains(outAddress.getAddr())))
+                .filter(transaction -> transaction
+                        .getInputs()
+                        .stream()
+                        .anyMatch(inputAddress -> addressesInDatabase.contains(inputAddress.getPrev_out().getAddr()))
+                ).collect(Collectors.toList());
+        for(BitcoinTransaction transaction : filteredTransactions){
+            saveTransaction(transaction);
+        }
+        return bitcoinMultiAddress;
     }
+
+    private void saveBitcoinSingleAddress(BitcoinSingleAddress singleAddress) {
+        bitcoinSingleAddressService.create(singleAddress);
+    }
+
     public void saveTransaction(BitcoinTransaction bitcoinTransaction) {
         bitcoinTransactionService.create(bitcoinTransaction);
         bitcoinTransactionOutService.create(bitcoinTransaction);
@@ -73,9 +106,14 @@ public class BitcoinServiceImpl implements BitcoinService {
     }
 
     public void saveTransactionToAddress(BitcoinTransaction bitcoinTransaction, String address) {
-        bitcoinTransactionService.createToAddress(bitcoinTransaction, address);
-        bitcoinTransactionOutService.create(bitcoinTransaction);
-        bitcoinTransactionInputService.create(bitcoinTransaction);
+        BitcoinTransaction temp = bitcoinTransactionService.createToAddress(bitcoinTransaction, address);
+       // bitcoinTransactionService.createToAddress(bitcoinTransaction, address);
+//        bitcoinTransactionOutService.create(bitcoinTransaction);
+//        bitcoinTransactionInputService.create(bitcoinTransaction);
+    }
+
+    public void saveTransactionToInputAndOutputAddresses(BitcoinTransaction bitcoinTransaction, String addressIn, String addressOut){
+        bitcoinTransactionService.createToInputAndOutputAddresses(bitcoinTransaction, addressIn, addressOut);
     }
 
     public void saveAddress(BitcoinAddressModel bitcoinAddressModel) {

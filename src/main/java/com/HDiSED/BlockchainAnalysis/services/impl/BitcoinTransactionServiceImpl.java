@@ -30,6 +30,14 @@ public class BitcoinTransactionServiceImpl implements BitcoinTransactionService 
         Map<String, Object> bitcoinTransactionMap = objectMapper.convertValue(bitcoinTransaction, Map.class);
         bitcoinTransactionMap.remove("inputs");
         bitcoinTransactionMap.remove("out");
-        return bitcoinTransactionRepository.createBitcionTransactionToAddress(bitcoinTransactionMap, address);
+        return bitcoinTransactionRepository.createBitcoinTransactionToSingleAddress(bitcoinTransactionMap, address);
+    }
+
+    @Override
+    public BitcoinTransaction createToInputAndOutputAddresses(BitcoinTransaction bitcoinTransaction, String addressIn, String addressOut) {
+        Map<String, Object> bitcoinTransactionMap = objectMapper.convertValue(bitcoinTransaction, Map.class);
+        bitcoinTransactionMap.remove("inputs");
+        bitcoinTransactionMap.remove("out");
+        return bitcoinTransactionRepository.createBitcoinTransactionToInputAndOutputAddresses(bitcoinTransactionMap, addressIn, addressOut);
     }
 }

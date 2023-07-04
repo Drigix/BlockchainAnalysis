@@ -2,6 +2,7 @@ package com.HDiSED.BlockchainAnalysis.controllers;
 
 import com.HDiSED.BlockchainAnalysis.models.BitcoinAddressModel;
 import com.HDiSED.BlockchainAnalysis.models.BitcoinBlock;
+import com.HDiSED.BlockchainAnalysis.models.BitcoinMultiAddress;
 import com.HDiSED.BlockchainAnalysis.models.BitcoinTransaction;
 import com.HDiSED.BlockchainAnalysis.services.BitcoinService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,9 +34,8 @@ public class BitcoinController {
     public BitcoinAddressModel getSingleAddress(@PathVariable String address) throws JsonProcessingException {
         return bitcoinService.findOneAddress(address);
     }
-
     @GetMapping(value = "/addresses")
-    public List<BitcoinAddressModel> getMultipleAddress() throws JsonProcessingException {
+    public BitcoinMultiAddress getMultipleAddress() throws JsonProcessingException {
         return bitcoinService.findManyAddresses();
     }
 }

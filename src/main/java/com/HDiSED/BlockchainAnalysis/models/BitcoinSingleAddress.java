@@ -14,6 +14,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Node("BitcoinSingleAddress")
 public class BitcoinSingleAddress {
+
     @Id
     @GeneratedValue
     private Long id;
