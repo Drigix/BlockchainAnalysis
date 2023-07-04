@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import static com.HDiSED.BlockchainAnalysis.constans.UrlConstans.*;
 
 @Service
@@ -67,62 +69,29 @@ public class BitcoinServiceImpl implements BitcoinService {
 
         // Zapisujemy BitcoinMultiAddress do bazy danych chyba usless
         //saveBitcoinMultiAddress(bitcoinMultiAddress);
-    //TODO THIS SAVE
+    //TODO NEED GOOD ADDRESSES TO SAVE TRANSACTION
         List<BitcoinSingleAddress> addresses = bitcoinMultiAddress.getAddresses();
         List<BitcoinTransaction> transactions = bitcoinMultiAddress.getTxs();
-
+        List<String> addressesInDatabase = new ArrayList<>();
 
         for (BitcoinSingleAddress singleAddress : addresses) {
-            // Zapisujemy pojedynczy adres do bazy danych
+            addressesInDatabase.add(singleAddress.getAddress());
             saveBitcoinSingleAddress(singleAddress);
-//            for (BitcoinTransaction transaction : transactions) {
-//                saveTransactionToAddress(transaction, singleAddress.getAddress());
-////                for (BitcoinTransactionOutModel output : transaction.getOut()) {
-////                    if (true) {
-////                        // Zapisujemy transakcję powiązaną z adresem do bazy danych
-////                        saveTransactionToAddress(transaction, singleAddress.getAddress());
-////                        // Przerywamy pętlę wewnętrzną, bo adres pojedynczy już został znaleziony w transakcji
-////                        break;
-////                    }
-////                }
-//            }
+
         }
-
-        //magia
-        for (BitcoinTransaction transaction : transactions) {
-
-            boolean hasInputAddress = false;
-
-            boolean hasOutputAddress = false;
-
-            List<BitcoinTransactionInputModel> inputs = transaction.getInputs();
-            //its plural number
-            List<BitcoinTransactionOutModel> outs = transaction.getOut();
-            String inputAddress = "";
-            String outAddress = "";
-            for (BitcoinTransactionInputModel input : inputs) {
-                 inputAddress = input.getPrev_out().getAddr();
-                if (true) {
-                    hasInputAddress = true;
-                    break; // Możemy przerwać pętlę, bo już znaleźliśmy adres IN na liście
-                }
-            }
-
-            // Sprawdzamy, czy adres OUT transakcji znajduje się na liście adresów
-            for (BitcoinTransactionOutModel out : outs) {
-                outAddress = out.getAddr();
-                if (true) {
-                    hasOutputAddress = true;
-                    break; // Możemy przerwać pętlę, bo już znaleźliśmy adres OUT na liście
-                }
-            }
-
-            // Jeśli zarówno adres IN, jak i adres OUT są na liście, zapisujemy transakcję
-            if (hasInputAddress && hasOutputAddress) {
-                saveTransactionToInputAndOutputAddresses(transaction, inputAddress, outAddress);
-            }
+        List<BitcoinTransaction> filteredTransactions = transactions.stream()
+                .filter(transaction ->transaction
+                        .getOut()
+                        .stream()
+                        .anyMatch(outAddress -> addressesInDatabase.contains(outAddress.getAddr())))
+                .filter(transaction -> transaction
+                        .getInputs()
+                        .stream()
+                        .anyMatch(inputAddress -> addressesInDatabase.contains(inputAddress.getPrev_out().getAddr()))
+                ).collect(Collectors.toList());
+        for(BitcoinTransaction transaction : filteredTransactions){
+            saveTransaction(transaction);
         }
-        // Iterujemy przez listę transakcji
         return bitcoinMultiAddress;
     }
 
