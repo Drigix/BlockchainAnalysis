@@ -23,6 +23,6 @@ public class AddressesConstans {
             binanceFirst, bitfinexFirst, binanceSecond, coincheck, okexFirst, okexSecond,
             poloniex, bitfinexSecond, bitmex, bittrexFirst, bittrexSecond, krakenFirst,
             krakenSecond, defichain)
-            .collect(Collectors.joining("|")) + "&n=50";
+            .collect(Collectors.joining("|")) + "&n=1000";
 
 }

@@ -67,8 +67,6 @@ public class BitcoinServiceImpl implements BitcoinService {
         ObjectMapper objectMapper = new ObjectMapper();
         BitcoinMultiAddress bitcoinMultiAddress = objectMapper.readValue(response, BitcoinMultiAddress.class);
 
-        // Zapisujemy BitcoinMultiAddress do bazy danych chyba usless
-        //saveBitcoinMultiAddress(bitcoinMultiAddress);
     //TODO NEED GOOD ADDRESSES TO SAVE TRANSACTION
         List<BitcoinSingleAddress> addresses = bitcoinMultiAddress.getAddresses();
         List<BitcoinTransaction> transactions = bitcoinMultiAddress.getTxs();
@@ -89,8 +87,9 @@ public class BitcoinServiceImpl implements BitcoinService {
                         .stream()
                         .anyMatch(inputAddress -> addressesInDatabase.contains(inputAddress.getPrev_out().getAddr()))
                 ).collect(Collectors.toList());
+
         for(BitcoinTransaction transaction : filteredTransactions){
-            saveTransaction(transaction);
+            saveTransactionToInputAndOutputAddresses(transaction, transaction.getInputs().get(0).getPrev_out().getAddr(),transaction.getOut().get(0).getAddr());
         }
         return bitcoinMultiAddress;
     }
@@ -101,8 +100,8 @@ public class BitcoinServiceImpl implements BitcoinService {
 
     public void saveTransaction(BitcoinTransaction bitcoinTransaction) {
         bitcoinTransactionService.create(bitcoinTransaction);
-        bitcoinTransactionOutService.create(bitcoinTransaction);
-        bitcoinTransactionInputService.create(bitcoinTransaction);
+       // bitcoinTransactionOutService.create(bitcoinTransaction);
+        //bitcoinTransactionInputService.create(bitcoinTransaction);
     }
 
     public void saveTransactionToAddress(BitcoinTransaction bitcoinTransaction, String address) {
